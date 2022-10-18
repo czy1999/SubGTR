@@ -2,7 +2,7 @@ import pickle
 import random
 import torch
 import numpy as np
-from tcomplex import TComplEx, Tmodel, Rmodel
+from tcomplex import TComplEx
 
 from tqdm import tqdm
 
