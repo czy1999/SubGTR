@@ -32,12 +32,14 @@ SubGTR on CronQuestions:
 ```
 python ./train_qa_model.py --model subgtr --subgraph_reasoning --time_sensitivity --aware_module
  ```
-SubGTR on Complex-CronQuestions:
+SubGTR on Complex-CronQuestions (create the wikidata_big_complex folder in advance ):
 ```
 python ./train_qa_model.py --model subgtr --dataset_name wikidata_big_complex --subgraph_reasoning --time_sensitivity --aware_module
  ```
 
 Please explore more argument options in train_qa_model.py.
+
+Note：Score Fusion module will be released soon. 
 
 ## Cite
 
