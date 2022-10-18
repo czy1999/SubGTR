@@ -3,7 +3,7 @@ This is the code for the manuscript "Temporal Knowledge Graph Question Answering
 Paper: https://www.sciencedirect.com/science/article/pii/S0950705122005603
 
 
-![Architecture of SubGTR](https://ars.els-cdn.com/content/image/1-s2.0-S0950705122005603-gr2.jpg)
+![Architecture of SubGTR](https://s1.ax1x.com/2022/10/18/xrUN34.png)
 
 ## Installation
 
