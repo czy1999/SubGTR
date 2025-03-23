@@ -682,7 +682,7 @@ class QA_Dataset_SubGTR(QA_Dataset):
     def __getitem__(self, index):
         data = self.prepared_data
         question_text = data['question_text'][index]
-        entity_time_ids = np.array(data['entity_time_ids'][index], dtype=np.long)
+        entity_time_ids = np.array(data['entity_time_ids'][index], dtype=np.int64)
         answers_arr = data['answers_arr'][index]
         answers_single = random.choice(answers_arr)
         # answers_khot = self.toOneHot(answers_arr, self.answer_vec_size)
@@ -698,7 +698,7 @@ class QA_Dataset_SubGTR(QA_Dataset):
         rels = data['rels'][index]
         return question_text, tokenized_question, entity_time_ids, entity_mask, head, tail, time, start_time, end_time, tail2, types, rels, answers_single
 
-    def pad_for_batch(self, to_pad, padding_val, dtype=np.long):
+    def pad_for_batch(self, to_pad, padding_val, dtype=np.int64):
         padded = np.ones([len(to_pad), len(max(to_pad, key=lambda x: len(x)))], dtype=dtype) * padding_val
         for i, j in enumerate(to_pad):
             padded[i][0:len(j)] = j
@@ -707,10 +707,10 @@ class QA_Dataset_SubGTR(QA_Dataset):
     # do this before padding for batch
     def get_attention_mask(self, tokenized):
         # first make zeros array of appropriate size
-        mask = np.zeros([len(tokenized), len(max(tokenized, key=lambda x: len(x)))], dtype=np.long)
+        mask = np.zeros([len(tokenized), len(max(tokenized, key=lambda x: len(x)))], dtype=np.int64)
         # now set ones everywhere needed
         for i, j in enumerate(tokenized):
-            mask[i][0:len(j)] = np.ones(len(j), dtype=np.long)
+            mask[i][0:len(j)] = np.ones(len(j), dtype=np.int64)
         return mask
 
     def _collate_fn(self, items):
@@ -719,10 +719,10 @@ class QA_Dataset_SubGTR(QA_Dataset):
 
         tokenized_questions = [item[1] for item in items]
         attention_mask = torch.from_numpy(self.get_attention_mask(tokenized_questions))
-        input_ids = torch.from_numpy(self.pad_for_batch(tokenized_questions, self.tokenizer.pad_token_id, np.long))
+        input_ids = torch.from_numpy(self.pad_for_batch(tokenized_questions, self.tokenizer.pad_token_id, np.int64))
 
         entity_time_ids_list = [item[2] for item in items]
-        entity_time_ids_padded = self.pad_for_batch(entity_time_ids_list, self.padding_idx, np.long)
+        entity_time_ids_padded = self.pad_for_batch(entity_time_ids_list, self.padding_idx, np.int64)
         entity_time_ids_padded = torch.from_numpy(entity_time_ids_padded)
 
         entity_mask = [item[3] for item in items]  # 0 if entity, 1 if not

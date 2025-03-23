@@ -1,3 +1,5 @@
+import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 import math
 import torch
 from torch import nn
@@ -17,7 +19,7 @@ class QA_SubGTR(nn.Module):
         self.tkbc_embedding_dim = tkbc_model.embeddings[0].weight.shape[1]
         self.sentence_embedding_dim = 768  # hardwired from
 
-        self.pretrained_weights = 'distilbert-base-uncased'
+        self.pretrained_weights = 'distilbert/distilbert-base-uncased'
         self.lm_model = DistilBertModel.from_pretrained(self.pretrained_weights)
         if args.lm_frozen == 1:
             print('Freezing LM params')
@@ -188,7 +190,7 @@ class QA_SubGTR(nn.Module):
         combined_embed = masked_question_embedding + masked_entity_time_embedding  # torch.Size([1, 10, 512])
         # also need to add position embedding
         sequence_length = combined_embed.shape[1]
-        v = np.arange(0, sequence_length, dtype=np.long)
+        v = np.arange(0, sequence_length, dtype=np.int64)
         indices_for_position_embedding = torch.from_numpy(v).cuda()
         position_embedding = self.position_embedding(indices_for_position_embedding)
         position_embedding = position_embedding.unsqueeze(0).expand(combined_embed.shape)  # torch.Size([1, 10, 512])

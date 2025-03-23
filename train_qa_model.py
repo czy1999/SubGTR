@@ -1,7 +1,10 @@
+import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com' # use mirror
 import argparse
 from typing import Dict
 import logging
 import torch
+import shutil
 from torch import optim
 import pickle
 import numpy as np
@@ -397,7 +400,7 @@ def save_model(qa_model, filename):
 
 if args.model != 'embedkgqa':  # TODO this is a hack
     tkbc_model = loadTkbcModel('models/{dataset_name}/kg_embeddings/{tkbc_model_file}'.format(
-        dataset_name=args.dataset_name, tkbc_model_file=args.tkbc_model_file
+        dataset_name='wikidata_big', tkbc_model_file=args.tkbc_model_file
     ))
     print('models/{dataset_name}/kg_embeddings/{tkbc_model_file}'.format(
         dataset_name=args.dataset_name, tkbc_model_file=args.tkbc_model_file))
@@ -415,6 +418,32 @@ test = args.test
 # train_split = 'train_aware3'
 # test = 'test_aware3'
 test = 'test'
+
+# 如果使用wikudata_big_complex,且./data下没有wikidata_big_complex的文件夹，需要在data下新建一个文件夹，名字为wikidata_big_complex，然后将wikidata_big的kg文件夹复制到wikidata_big_complex文件夹下，再把ComplexCronQuestions复制过来，并且文件夹重命名为question
+if args.dataset_name == 'wikidata_big_complex':
+    data_dir = './data'
+    target_dir = os.path.join(data_dir, 'wikidata_big_complex')
+    source_kg_dir = os.path.join(data_dir, 'wikidata_big', 'kg')
+    source_question_dir = 'ComplexCronQuestions'
+    target_question_dir = os.path.join(target_dir, 'questions')
+    target_model_dir = './models/wikidata_big_complex/qa_models'
+
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+        print(f"Created directory: {target_dir}")
+
+    if not os.path.exists(target_model_dir):
+        os.makedirs(target_model_dir)
+        print(f"Created directory: {target_model_dir}")
+
+    target_kg_dir = os.path.join(target_dir, 'kg')
+    if not os.path.exists(target_kg_dir):
+        shutil.copytree(source_kg_dir, target_kg_dir)
+        print(f"Copied {source_kg_dir} to {target_kg_dir}")
+
+    if os.path.exists(source_question_dir) and not os.path.exists(target_question_dir):
+        shutil.copytree(source_question_dir, target_question_dir)
+        print(f"Copied {source_question_dir} to {target_question_dir}")
 
 
 if args.model == 'bert' or args.model == 'roberta':

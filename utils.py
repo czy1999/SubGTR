@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 def loadTkbcModel(tkbc_model_file):
     print('Loading tkbc model from', tkbc_model_file)
+    tkbc_model_file = tkbc_model_file.replace('tmodel', 'tcomplex')
     x = torch.load(tkbc_model_file, map_location=torch.device("cpu"))
     num_ent = x['embeddings.0.weight'].shape[0]
     num_rel = x['embeddings.1.weight'].shape[0]
@@ -95,8 +96,7 @@ def dataIdsToLiterals(d, all_dicts):
 
 
 def getAllDicts(dataset_name):
-    # base_path = '/scratche/home/apoorv/tkbc/tkbc_env/lib/python3.7/site-packages/tkbc-0.0.0-py3.7.egg/tkbc/data/wikidata_small/'
-    base_path = 'data/{dataset_name}/kg/tkbc_processed_data/{dataset_name}/'.format(
+    base_path = 'data/{dataset_name}/kg/tkbc_processed_data/wikidata_big/'.format(
         dataset_name=dataset_name
     )
     dicts = {}
@@ -106,6 +106,7 @@ def getAllDicts(dataset_name):
     rel2id = dicts['rel_id']
     ent2id = dicts['ent_id']
     ts2id = dicts['ts_id']
+    # hack
     file_ent = 'data/{dataset_name}/kg/wd_id2entity_text.txt'.format(
         dataset_name=dataset_name
     )
